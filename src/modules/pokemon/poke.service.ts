@@ -2,13 +2,19 @@ import { Injectable } from "@nestjs/common";
 import axios from "axios";
 import * as fs from 'fs';
 import * as pokemon from 'pokemon.js'
+import { JSDOM } from 'jsdom'
 
 
 @Injectable()
 export class PokemonService {
     async getPokemon(id: string): Promise<Pokemon> {
+
         pokemon.setLanguage('english')
 
+        const url = `https://www.pokemon.com/br/pokedex/${id}`
+        const response = await axios.get(url)
+        const dom = new JSDOM(response.data)
+        let curiosity = dom.window.document.querySelector("p").textContent.trim();
         const poketype: string[] = JSON.parse(fs.readFileSync('./src/utils/poketype.json', 'utf8'))
         let type1
         let type2
@@ -31,17 +37,18 @@ export class PokemonService {
             femea = poke['sprites']['front_female']
         }
 
-
-
-
         const pok: Pokemon = {
             name: poke['name'],
             type1: type1,
             type2: type2,
-            sprite: poke['sprites']['front_default'],
-            spriteF: femea,
-            shiny: poke['sprites']['front_shiny'],
-            curiosity: 'batata',
+            gender_rate: poke['gender_rate'],
+            baby: poke['is_baby'],
+            mythical: poke['is_mythical'],
+            legendary: poke['is_legendary'],
+            sprite_normal: poke['sprites']['front_default'],
+            sprite_female: femea,
+            sprite_shiny: poke['sprites']['front_shiny'],
+            curiosity: curiosity.trim(),
             HP: poke['stats']['hp'],
             ATK: poke['stats']['attack'],
             DEF: ['stats']['defense'],
@@ -53,4 +60,6 @@ export class PokemonService {
 
         return pok
     }
+
+
 }
