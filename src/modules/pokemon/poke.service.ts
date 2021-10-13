@@ -22,34 +22,24 @@ export class PokemonService {
             type1 = poke['types'][0]['name']
         }
 
-
-        let femea
+        let sprit: PokemonSprite
         if (!poke['sprites']['front_female']) {
-            femea = null
+            sprit = {
+                sprite_normal: poke['sprites']['front_default'],
+                sprite_shiny: poke['sprites']['front_shiny'],
+            }
         } else {
-            femea = poke['sprites']['front_female']
+            sprit = {
+                sprite_normal: poke['sprites']['front_default'],
+                sprite_female: poke['sprites']['front_female'],
+                sprite_shiny: poke['sprites']['front_shiny'],
+            }
         }
         let type: string[] = []
         type.push(type1)
         if (poke['types'][1]) {
             type2 = poke['types'][1]['name']
             type.push(type2)
-        } else {
-            type2 = null
-        }
-
-        let sprit: PokemonSprite
-        if (femea != null) {
-            sprit = {
-                sprite_normal: poke['sprites']['front_default'],
-                sprite_female: femea,
-                sprite_shiny: poke['sprites']['front_shiny'],
-            }
-        } else {
-            sprit = {
-                sprite_normal: poke['sprites']['front_default'],
-                sprite_shiny: poke['sprites']['front_shiny'],
-            }
         }
 
         let statu: PokemonStatus = {
